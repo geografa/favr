@@ -48,11 +48,11 @@ var API_ENDPOINT = 'https://api.foursquare.com/v2/users/self/venuelikes?ll=45,-1
 
 
 
-$.getJSON(API_ENDPOINT, { dataType: "JSONP" }, function(json){ 
-        var parsed = JSON.parse(json);
-        console.log(parsed);
-        access_token = parsed.access_token;
-    });
+// $.getJSON(API_ENDPOINT, { dataType: "JSONP" }, function(json){ 
+//         var parsed = JSON.parse(json);
+//         console.log(parsed);
+//         access_token = parsed.access_token;
+//     });
 
 // Keep our place markers organized in a nice group.
 var foursquarePlaces = L.layerGroup().addTo(map);
