@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.26.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.26.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v2.2.0/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v2.2.0/mapbox-gl-directions.css' type='text/css' />
+
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.css' type='text/css' />
+<!-- jQuery is required for this example. -->
+<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
+<style>
+#geocoder-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin-top: 145px;
+}
+
+#geocoder-container > div {
+    min-width:25%;
+    margin-left:1%;
+}
+
+.mapboxgl-ctrl-geocoder {min-width: 320px;}
+</style>
+<div id='map'></div>
+<div id='geocoder-container'></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JhZmEiLCJhIjoiZjk3Mjk2YWYzZTNlYjM3ODdlNzJlOWJlM2VjZGI0ZDEifQ.OTT9oT7CqAc9vZsnJLT51Q';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/grafa/ciof7kbzs002mahnm9ju6qjn0/',
+    center: [-122.67773866653444,45.52245801087795],
+    zoom: 12 
+});
+
+map.addControl(new mapboxgl.Directions());
+
+var geocoder = new mapboxgl.Geocoder({
+    container: 'geocoder-container' // Optional. Specify a unique container for the control to be added to.
+});
+
+map.addControl(geocoder);
+
+function getQueryVariable(variable) {
+    var query = window.location.hash.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    console.log('Query variable %s not found', variable);
+}
+
+var fsToken = getQueryVariable('access_token');
+
+var API_ENDPOINT = 'https://api.foursquare.com/v2/users/self/venuelikes?ll=45,-122.5' +
+  '&oauth_token=' + fsToken +
+  '&v=20161020';
+
+// After the map style has loaded on the page, add a source layer and default
+// styling for a single point.
+map.on('load', function() {
+    map.addSource('single-point', {
+        "type": "geojson",
+        "data": {
+            "type": "FeatureCollection",
+            "features": []
+        }
+    });
+
+    map.addLayer({
+        "id": "point",
+        "source": "single-point",
+        "type": "circle",
+        "paint": {
+            "circle-radius": 10,
+            "circle-color": "#007cbf"
+        }
+    });
+    
+    map.addLayer({
+        'id': '3d-buildings',
+        'source': 'composite',
+        'source-layer': 'building',
+        'filter': ['==', 'extrude', 'true'],
+        'type': 'fill',
+        'minzoom': 15,
+        'paint': {
+            'fill-color': '#aaa',
+            'fill-extrude-height': {
+                'type': 'identity',
+                'property': 'height'
+            },
+            'fill-extrude-base': {
+                'type': 'identity',
+                'property': 'min_height'
+            },
+            'fill-opacity': .6
+        }
+    }, 'admin_maritime');
+
+    // Listen for the `geocoder.input` event that is triggered when a user
+    // makes a selection and add a symbol that matches the result.
+    geocoder.on('result', function(ev) {
+        map.getSource('single-point').setData(ev.result.geometry);
+    });
+});
+
+</script>
+
+</body>
+</html>
