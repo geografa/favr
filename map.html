@@ -14,7 +14,7 @@
   color:#FFF;
   display:block;
   position:absolute;
-  top:50%;left:50%;
+  top:30px;right:20px;
   width:160px;
   margin:-20px 0 0 -80px;
   z-index:100;
@@ -27,6 +27,7 @@
     background:#3074a4;
     color:#fff;
     }
+
 </style>
 </head>
 <body>
@@ -39,7 +40,7 @@
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiZ3JhZmEiLCJhIjoiY2l1amhpd2l6MDBuNDJ6b2R4bDA3cGR4biJ9.zFkPzpsqDmKf5i8lqoslew';
 var map = L.mapbox.map('map', 'grafa.f80610c8')
-    .setView([37.75979065676546,-122.43224143981934], 13);
+    .setView([45.53010222002975,-122.66973495483398], 13);
 var myLayer = L.mapbox.featureLayer().addTo(map);
 
 var geolocate = document.getElementById('geolocate');
@@ -127,8 +128,9 @@ $.getJSON(API_ENDPOINT, function(result, status) {
                 'marker-size': 'large'
               })
             })
-          .bindPopup('<strong><a href="https://foursquare.com/v/' + venue.id + '">' +
-            venue.name + '</a></strong>')
+          .bindPopup('<h3><a href="https://foursquare.com/v/' + venue.id + '">' +
+            venue.name + '</a></h3><p>' +
+            venue.tipHint + '</p>')
             .addTo(foursquarePlaces);
         }
 
